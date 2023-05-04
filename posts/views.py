@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.views import APIView
@@ -6,21 +6,38 @@ from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
 
 from .models import Post
-from .serializers import PostSerializer, VeriyEmailSerializer
+from .serializers import PostSerializer, VeriyEmailSerializer, UserSerializer
 from .permissions import IsAuthorOrReadOnly
 from allauth.account.views import ConfirmEmailView
 from django.views.generic import TemplateView
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
-
-class PostList(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-class PostDetail(generics.RetrieveUpdateDestroyAPIView):
+class PostViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+# class PostList(generics.ListCreateAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+
+# class PostDetail(generics.RetrieveUpdateDestroyAPIView):
+#     permission_classes = (IsAuthorOrReadOnly,)
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+
+# class UserList(generics.ListCreateAPIView):
+#     queryset = get_user_model().objects.all()
+#     serializer_class = UserSerializer
+
+# class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = get_user_model().objects.all()
+#     serializer_class = UserSerializer
 
 class VerifyEmailView(APIView, ConfirmEmailView):
     permission_classes = (AllowAny,)
